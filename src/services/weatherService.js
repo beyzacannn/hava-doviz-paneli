@@ -8,14 +8,12 @@ const cache = new NodeCache({ stdTTL: 600 });
 async function getWeatherByCity(city) {
   const cacheKey = city.trim().toLowerCase();
 
-  // 1. Önce önbelleğe bak
   const cachedData = cache.get(cacheKey);
   if (cachedData) {
     console.log(`Önbellekten döndü: ${cacheKey}`);
     return { ...cachedData, fromCache: true };
   }
 
-  // 2. Önbellekte yoksa OpenWeather'a git
   console.log(`API'den çekiliyor: ${cacheKey}`);
   const apiKey = process.env.OPENWEATHER_API_KEY;
   const url = `${BASE_URL}?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric&lang=tr`;
@@ -46,7 +44,6 @@ async function getWeatherByCity(city) {
     windSpeed: data.wind.speed,
   };
 
-  // 3. Sonucu önbelleğe kaydet
   cache.set(cacheKey, weather);
 
   return { ...weather, fromCache: false };
